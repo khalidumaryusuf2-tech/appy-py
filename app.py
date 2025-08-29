@@ -14,161 +14,14 @@ EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 app = Flask(__name__)
+UPLOAD_FOLDER = 'receipts'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ✅ Styled Order Form HTML
-form_html = '''
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Mac Dee Order Form</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #fdf6f0;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .form-container {
-            background-color: #fff;
-            padding: 30px 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 100%;
-        }
-        h2 {
-            text-align: center;
-            color: #d35400;
-            margin-bottom: 20px;
-        }
-        label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-        }
-        input[type="text"],
-        input[type="email"],
-        input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #d35400;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            width: 100%;
-            margin-top: 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #e67e22;
-        }
-    </style>
-</head>
-<body>
-    <div class="form-container">
-        <h2>Mac Dee Order Form</h2>
-        <form method="POST" action="/create-checkout-session">
-            <label>Name:</label>
-            <input type="text" name="name" required>
-
-            <label>Email:</label>
-            <input type="email" name="email" required>
-
-            <label>Quantity:</label>
-            <input type="number" name="quantity" min="1" required>
-
-            <input type="hidden" name="payment_method" value="transfer">
-            <button type="submit">Place Order</button>
-        </form>
-    </div>
-</body>
-</html>
-'''
+# ✅ Order Form HTML
+form_html = '''...'''  # (Use your existing form_html here)
 
 # ✅ Receipt Upload HTML
-upload_html = '''
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Upload Receipt</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #fdf6f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .upload-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 100%;
-        }
-        h2 {
-            text-align: center;
-            color: #d35400;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 15px;
-        }
-        input[type="file"],
-        input[type="email"] {
-            width: 100%;
-            margin-top: 5px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-        }
-        button {
-            margin-top: 20px;
-            background-color: #d35400;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            width: 100%;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #e67e22;
-        }
-    </style>
-</head>
-<body>
-    <div class="upload-container">
-        <h2>Upload Payment Receipt</h2>
-        <form method="POST" action="/upload-receipt" enctype="multipart/form-data">
-            <label>Email:</label>
-            <input type="email" name="email" required>
-
-            <label>Upload Receipt:</label>
-            <input type="file" name="receipt" accept=".jpg,.jpeg,.png,.pdf" required>
-
-            <button type="submit">Submit Receipt</button>
-        </form>
-    </div>
-</body>
-</html>
-'''
+upload_html = '''...'''  # (Use your existing upload_html here)
 
 @app.route('/')
 def index():
@@ -186,7 +39,7 @@ def checkout():
 
     total_amount = quantity * unit_price / 100  # Convert to naira
 
-    # ✅ Send email notification
+    # ✅ Send admin email
     msg = EmailMessage()
     msg['Subject'] = 'New Mac Dee Order'
     msg['From'] = EMAIL_ADDRESS
@@ -207,7 +60,6 @@ def checkout():
         writer = csv.writer(file)
         writer.writerow([datetime.now(), name, email, quantity, f"₦{total_amount:.2f}", "Bank Transfer"])
 
-    # ✅ Redirect to thank-you page
     return redirect(f'/thank-you?name={name}&amount={total_amount:.2f}')
 
 @app.route('/thank-you')
@@ -235,24 +87,4 @@ def upload_receipt():
     if not file:
         return "❌ No file uploaded."
 
-    filename = secure_filename(file.filename)
-    file_data = file.read()
-
-    msg = EmailMessage()
-    msg['Subject'] = 'Payment Receipt Submission'
-    msg['From'] = EMAIL_ADDRESS
-    msg['To'] = EMAIL_ADDRESS
-    msg.set_content(f'Receipt submitted by: {email}')
-    msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename=filename)
-
-    try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            smtp.send_message(msg)
-    except Exception as e:
-        return f"❌ Failed to send receipt: {e}"
-
-    return f"✅ Receipt uploaded successfully! We'll confirm your payment shortly."
-
-if __name__ == '__main__':
-    app.run(port=8000, debug=True)
+    filename = secure
