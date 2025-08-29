@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Mac Dee</title>
+</head>
+<body>
+  <h1>Order Mac Dee</h1>
+  <form action="/create-checkout-session" method="POST">
+    <label>Name:</label><br>
+    <input type="text" name="name" required><br>
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br>
+    <label>Quantity:</label><br>
+    <input type="number" name="quantity" min="1" required><br><br>
+    <button type="submit">Order & Pay</button>
+  </form>
+</body>
+</html>
+
