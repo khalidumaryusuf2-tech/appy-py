@@ -8,7 +8,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 import uuid
 
-# ✅ Load environment variables
+# Load environment variables
 load_dotenv()
 
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
@@ -40,7 +40,7 @@ def checkout():
 
     total_amount = quantity * unit_price / 100  # Convert to naira
 
-    # ✅ Send admin email
+    # Send admin email
     msg = EmailMessage()
     msg['Subject'] = 'New Mac Dee Order'
     msg['From'] = EMAIL_ADDRESS
@@ -57,7 +57,7 @@ def checkout():
         print(f"Email error: {e}")
         return "❌ Something went wrong while sending your order. Please try again later."
 
-    # ✅ Log order to CSV
+    # Log order to CSV
     with open('orders.csv', mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([datetime.now(), name, email, quantity, f"₦{total_amount:.2f}", "Bank Transfer"])
@@ -93,7 +93,7 @@ def upload_receipt():
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(filepath)
 
-    # ✅ Send admin email with attachment
+    # Send admin email with attachment
     msg = EmailMessage()
     msg['Subject'] = 'Payment Receipt Submission'
     msg['From'] = EMAIL_ADDRESS
@@ -107,7 +107,7 @@ def upload_receipt():
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             smtp.send_message(msg)
 
-            # ✅ Send confirmation to customer
+            # Send confirmation to customer
             confirmation = EmailMessage()
             confirmation['Subject'] = 'Mac Dee Receipt Received'
             confirmation['From'] = EMAIL_ADDRESS
@@ -124,4 +124,5 @@ def upload_receipt():
     return "✅ Receipt received and will be confirmed shortly."
 
 if __name__ == '__main__':
-    app.run(port=8000, debug=True)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host='0.0.0.0', port=port)
