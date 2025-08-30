@@ -34,9 +34,9 @@ def index():
 
 @app.route('/create-checkout-session', methods=['POST'])
 def checkout():
-    name = request.form['name']
-    email = request.form['email']
-    quantity = int(request.form['quantity'])
+    name = request.form.get('name')
+    email = request.form.get('email')
+    quantity = int(request.form.get('quantity', 0))
     unit_price = 200000  # ₦2000.00 in kobo
 
     if quantity * unit_price < 200000:
@@ -83,13 +83,19 @@ def thank_you():
 @app.route('/upload-receipt', methods=['GET', 'POST'])
 def upload_receipt():
     if request.method == 'GET':
-        return render_template('upload.html')
+        return render_template('upload.html')  # Make sure this file exists
 
-    email = request.form['email']
-    file = request.files['receipt']
+    email = request.form.get('email')
+    file = request.files.get('receipt')
 
-    if not file or not allowed_file(file.filename):
-        return "❌ Invalid or missing file. Only PNG, JPG, JPEG, or PDF allowed."
+    if not email:
+        return "❌ Email is required."
+
+    if not file:
+        return "❌ No file uploaded."
+
+    if not allowed_file(file.filename):
+        return "❌ Invalid file type. Only PNG, JPG, JPEG, or PDF allowed."
 
     filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -125,6 +131,10 @@ def upload_receipt():
         return "❌ Failed to send receipt. Please try again later."
 
     return "✅ Receipt received and will be confirmed shortly."
+
+@app.errorhandler(413)
+def too_large(e):
+    return "❌ File too large. Maximum size is 5MB.", 413
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8000))
