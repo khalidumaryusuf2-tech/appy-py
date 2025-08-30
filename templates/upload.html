@@ -1,11 +1,55 @@
 <!DOCTYPE html>
 <html>
-<head><title>Upload Receipt</title></head>
+<head>
+  <title>Upload Receipt</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    form {
+      max-width: 400px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input[type="email"],
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
 <body>
-  <h1>Upload your receipt</h1>
+  <h1>Upload Your Receipt</h1>
   <form method="POST" enctype="multipart/form-data">
-    <input type="file" name="receipt">
+    <label for="email">Email Address:</label>
+    <input type="email" name="email" id="email" required>
+
+    <label for="receipt">Receipt File:</label>
+    <input type="file" name="receipt" id="receipt" required>
+
     <button type="submit">Submit</button>
   </form>
 </body>
 </html>
+
