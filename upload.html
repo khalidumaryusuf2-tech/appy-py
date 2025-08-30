@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Receipt</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>📤 Upload Your Receipt</h1>
+  <form action="/upload-receipt" method="POST" enctype="multipart/form-data">
+    <label for="email">Your Email:</label>
+    <input type="email" name="email" id="email" required>
+
+    <label for="receipt">Upload Receipt (PNG, JPG, JPEG, PDF):</label>
+    <input type="file" name="receipt" id="receipt" accept=".png,.jpg,.jpeg,.pdf" required>
+
+    <button type="submit">Submit Receipt</button>
+  </form>
+</body>
+</html>
